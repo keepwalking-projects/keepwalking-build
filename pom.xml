@@ -23,7 +23,7 @@
 
     <groupId>io.keepwalking</groupId>
     <artifactId>keepwalking-build</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>Keepwalking :: Build</name>
     <description>Keepwalking parent pom</description>
@@ -32,6 +32,8 @@
         <developer>
             <name>Fangtao</name>
             <email>taofangf@gmail.com</email>
+            <organization>Keepwalking</organization>
+            <organizationUrl>https://github.com/keepwalking-projects/</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>
@@ -39,6 +41,8 @@
     </developers>
 
     <properties>
+        <revision>1.0-SNAPSHOT</revision>
+
         <java.version>1.8</java.version>
         <!-- delimiter that doesn't clash with Spring ${} placeholders -->
         <resource.delimiter>@</resource.delimiter>
@@ -60,6 +64,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-failsafe-plugin.version>2.22.1</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
 
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
@@ -184,7 +189,10 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>${flatten-maven-plugin.version}</version>
-                    <inherited>true</inherited>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>flatten</id>
@@ -192,15 +200,13 @@
                             <goals>
                                 <goal>flatten</goal>
                             </goals>
-                            <configuration>
-                                <updatePomFile>true</updatePomFile>
-                                <flattenMode>oss</flattenMode>
-                                <pomElements>
-                                    <parent>expand</parent>
-                                    <distributionManagement>remove</distributionManagement>
-                                    <repositories>remove</repositories>
-                                </pomElements>
-                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
                         </execution>
                     </executions>
                 </plugin>
@@ -221,5 +227,16 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
